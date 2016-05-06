@@ -13,7 +13,6 @@
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
  */
-
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -24,6 +23,7 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+
 
     canvas.width = 505;
     canvas.height = 606;
@@ -80,7 +80,62 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
+        checkWater();
+    }
+/*
+ * Function that updates score tally in the score object based on result
+ * Passed to it from either checkCollisions (lose) or youWin (win)
+ */
+    function updateTally(result) {
+        if (result === 'lose') {
+            score.tally--;
+        } else if (result === 'win') {
+            score.tally++;
+        }
+    }
+/* checkCollisions checks for whether you've hit an enemy
+ */
+    function checkCollisions() {
+        /*
+         * loop through the enemies and identify them as 'enemy'
+         */
+        for (var i = 0; i <= allEnemies.length - 1; i++) {
+            var enemy = allEnemies[i];
+            // if you're on the same row as enemy
+            if (enemy.y === player.y) {
+                //delineate player and enemy boundaries
+                var testThis = enemy.rightLimit >= player.leftLimit;
+                var testThat = enemy.leftLimit <= player.rightLimit;
+                // if you're within the boundaries of an enemy
+                if (testThis && testThat) {
+                    //reset player position
+                    player.init();
+                    // loop through all the enemies and indivdually reset them (passing the lose parameter)
+                    allEnemies.forEach(function(enemy) {
+                        enemy.init('lose');
+                    });
+                    // update the tally and render it
+                    updateTally('lose');
+                    score.render();
+                }
+            }
+        }
+    }
+    // check to see if you've made it to the water, call the youWin function
+    function checkWater() {
+        if (player.y < gameProps.rowHeight - 40) {
+            youWin();
+        }
+    }
+    // does the same as checkCollisions but passes the win paramter in the functions
+    function youWin() {
+        player.init();
+        allEnemies.forEach(function(enemy) {
+            enemy.init('win');
+        });
+        updateTally('win');
+        score.render();
     }
 
     /* This is called by the update function and loops through all of the
@@ -108,12 +163,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/water-block.png', // Top row is water
+                'images/stone-block.png', // Row 1 of 3 of stone
+                'images/stone-block.png', // Row 2 of 3 of stone
+                'images/stone-block.png', // Row 3 of 3 of stone
+                'images/grass-block.png', // Row 1 of 2 of grass
+                'images/grass-block.png' // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -175,9 +230,16 @@ var Engine = (function(global) {
     ]);
     Resources.onReady(init);
 
+
+
+
     /* Assign the canvas' context object to the global variable (the window
      * object when run in a browser) so that developers can use it more easily
      * from within their app.js files.
      */
     global.ctx = ctx;
+    // call the score render function AFTER the canvas ctx is defined so we can reference its properties
+    score.render();
+
+
 })(this);
