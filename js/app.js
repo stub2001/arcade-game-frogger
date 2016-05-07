@@ -1,3 +1,4 @@
+ 'use strict';
  // some of the canvas properties to work with
  var gameProps = {
      columns: 5,
