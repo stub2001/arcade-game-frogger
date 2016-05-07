@@ -1,4 +1,3 @@
- 'use strict';
  // some of the canvas properties to work with
  var gameProps = {
      columns: 5,
@@ -90,6 +89,9 @@
      this.sprite = 'images/char-boy.png';
      this.x = gameProps.colWidth * 2;
      this.y = (gameProps.rowHeight * 5) - 25;
+ };
+
+ Player.prototype.update = function(dt) {
      this.leftLimit = this.x;
      this.rightLimit = this.x + gameProps.colWidth;
  };
@@ -100,7 +102,6 @@
 
 // based on keyboard movements, player moves around, until it reaches the canvas border then the movements are disabled
  Player.prototype.handleInput = function(direction) {
-
      switch (direction) {
          case 'left':
              if (this.x <= 0) {
