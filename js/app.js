@@ -1,3 +1,4 @@
+ 'use strict';
  // some of the canvas properties to work with
  var gameProps = {
      columns: 5,
@@ -89,9 +90,6 @@
      this.sprite = 'images/char-boy.png';
      this.x = gameProps.colWidth * 2;
      this.y = (gameProps.rowHeight * 5) - 25;
- };
-
- Player.prototype.update = function(dt) {
      this.leftLimit = this.x;
      this.rightLimit = this.x + gameProps.colWidth;
  };
@@ -105,35 +103,35 @@
 
      switch (direction) {
          case 'left':
-             if (player.x <= 0) {
+             if (this.x <= 0) {
                 /*do nothing*/
              } else {
-                 player.x -= gameProps.colWidth;
+                 this.x -= gameProps.colWidth;
              }
              break;
 
          case 'up':
-             if (player.y >= gameProps.height) {
+             if (this.y >= gameProps.height) {
                 /*do nothing*/
              } else {
-                 player.y -= gameProps.rowHeight;
+                 this.y -= gameProps.rowHeight;
              }
 
              break;
 
          case 'right':
-             if (player.x >= gameProps.colWidth * 4) {
+             if (this.x >= gameProps.colWidth * 4) {
                 /*do nothing*/
              } else {
-                 player.x += gameProps.colWidth;
+                 this.x += gameProps.colWidth;
              }
              break;
 
          case 'down':
-             if (player.y >= (gameProps.rowHeight * 5) - 40) {
+             if (this.y >= (gameProps.rowHeight * 5) - 40) {
                 /*do nothing*/
              } else {
-                 player.y += gameProps.rowHeight;
+                 this.y += gameProps.rowHeight;
              }
 
         break;
